@@ -1,6 +1,6 @@
 # AzureStorageMVCWebApp
 .Net 6 Azure Storage MVC WebApp Example
 
-- Table
-- Blob
-- Queue
+- Table Storage
+- Blob Storage
+- Queue Storage
