@@ -1,0 +1,64 @@
+﻿@using AzureStorageLibrary.Model
+@model Product
+<h2>@(ViewBag.IsUpdate ? "Update Product":"Add Product")</h2>
+<form class="form-inline d-flex flex-row bd-highlight mb-3" asp-action="@(ViewBag.IsUpdate ? "Update":"Create")" method="post" enctype="application/x-www-form-urlencoded">
+    <div class="p-2">
+        <input class="form-control mr-1" asp-for="Name" placeholder="Product Name"/>
+    </div>
+    <div class="p-2">
+        <input class="form-control mr-1" asp-for="Price" placeholder="Product Price"/>
+    </div>
+    <div class="p-2">
+        <input class="form-control mr-1" asp-for="Stock" placeholder="Product Stock"/>
+    </div>
+    <div class="p-2">
+        <input class="form-control mr-1" asp-for="Color" placeholder="Product Color"/>
+
+        <input type="hidden" class="form-control mr-1" asp-for="RowKey" />
+        <input type="hidden" class="form-control mr-1" asp-for="PartitionKey" />
+        <input type="hidden" class="form-control mr-1" asp-for="ETag" />
+    </div>
+    <div class="p-2">
+        <input class="btn btn-primary" type="submit" value="@(ViewBag.IsUpdate ? "Update Product":"Save Product")" />
+    </div>
+</form>
+
+<h2>Query</h2>
+<form class="form-inline d-flex flex-row bd-highlight mb-3" asp-action="Query" method="Get">
+    <div class="p-2">
+        <input class="form-control mr-1" type="number" name="price" placeholder="Product Price"/>
+    </div>
+    <div class="p-2">
+        <input class="btn btn-success" type="submit" value="Search" />
+    </div>
+</form>
+
+<h2>Products</h2>
+<table class="table table-bordered">
+    <tr>
+        <th>RowKey</th>
+        <th>PartitionKey</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Color</th>
+        <th>TimeStamp</th>
+        <th>Actions</th>
+    </tr>
+@foreach (var item in ViewBag.products as List<Product>)
+    {
+                            <tr>
+                                <td>@item.RowKey</td>
+                                <td>@item.PartitionKey</td>
+                                <td>@item.Name</td>
+                                <td>@item.Price</td>
+                                <td>@item.Stock</td>
+                                <td>@item.Color</td>
+                                <td>@item.Timestamp</td>
+                                <td>
+                                    <a class="btn btn-warning" asp-action="Update" asp-controller="TableStorage" asp-route-rowKey="@item.RowKey" asp-route-partitionKey="@item.PartitionKey">Update</a>
+                                    <a class="btn btn-danger" asp-action="Delete" asp-controller="TableStorage" asp-route-rowKey="@item.RowKey" asp-route-partitionKey="@item.PartitionKey">Delete</a>
+                                </td>
+                            </tr>
+    }
+</table>
