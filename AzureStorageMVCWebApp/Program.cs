@@ -1,5 +1,6 @@
 using AzureStorageLibrary;
 using AzureStorageLibrary.Service;
+using AzureStorageMVCWebApp.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ builder.Services.AddSingleton<IBlobStorage, BlobStorage>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -26,7 +28,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-
+app.MapHub<NotificationHub>("/NotificationHub");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=TableStorage}/{action=Index}/{id?}");

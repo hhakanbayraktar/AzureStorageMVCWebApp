@@ -1,0 +1,66 @@
+﻿@section Scripts
+{
+<script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(() => {
+        var connection = new signalR.HubConnectionBuilder().withUrl("/NotificationHub").build();
+        connection.start().then(() => {
+            console.log("Hub ConnectionId: " + connection.connectionId)
+        });
+
+        connection.on("NotifyCompleteWatermarkProcess", () => {
+                console.log("NotifyCompleteWatermarkProcess");
+                $("#status").text("Completed");
+        })
+
+        var pictures = new Array();
+        var userId = "@ViewBag.UserId";
+        var city = "@ViewBag.City";
+
+        $("#AddWatermark").click(() => {
+            let pictureWatermarkQueue = {
+                "UserId" : userId,
+                "City" : city,
+                "ConnectionId" : connection.connectionId,
+                "WatermarkText" : $("#watermarkText").val(),
+                "Pictures" : pictures
+            }
+
+            $.post("pictures/AddWatermark", pictureWatermarkQueue, (data) => {
+                console.log("Success")
+                $("#status").text("Processing");
+            })
+        });
+
+        $("#images img").click(function () {
+            $(this).css("border", "3px solid red");
+            pictures.push($(this).attr("data-name"));
+            console.log(pictures);
+        });
+    });
+</script>
+}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <form class="form-inline" asp-action="Index" method="post" enctype="multipart/form-data">
+            <input type="file" name="pictures" multiple />
+            <button class="btn btn-primary" type="submit">Add Picture</button>
+        </form>
+        <div class="form-inline d-flex flex-row bd-highlight mb-3" asp-action="Index" method="post" enctype="multipart/form-data">
+            <div class="p-2">
+                <input class="form-control  mr-1" type="text" id="watermarkText" />
+            </div>
+            <div class="p-2">
+                <button id="AddWatermark" class="btn btn-warning" type="submit">Add Watermark</button>
+            </div>
+        </div>
+        <h5 id="status"></h5>
+        <h2>Pictures</h2>
+        <div id="images">
+            @foreach (var item in ViewBag.fileBlobs as List<FileBlob>)
+            {
+                <img style="width:100px;" data-name="@item.Name" src="@item.Url" />
+            }
+        </div>
+    </div>
+</div>
